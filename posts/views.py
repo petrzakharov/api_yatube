@@ -15,10 +15,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        # serializer.save(
-        #     author=self.request.user,
-        #     professor_id=self.kwargs.get('pk'),
-        # )
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -29,7 +25,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        serializer.save(
+            author=self.request.user,
+            post=get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+        )
 
     def get_queryset(self):
         post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
